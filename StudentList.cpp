@@ -24,6 +24,7 @@ int menu;
 int contador;
 int selec_student;
 int qualif, qualif_f, num_student;
+double qualif_f_f;
 
 int main()
 {
@@ -90,41 +91,47 @@ void load_data()
 			imp_file >> students[contador].years;
 			imp_file >> students[contador].dni;
 			imp_file >> students[contador].qualification;
+			imp_file.get( );
 
 			if((!students[contador].name.empty()) && (!students[contador].lastname.empty()) && (students[contador].years != 0) && (students[contador].dni != 0))
 			{
 				contador++;
 			}
 		}
+		
 	}
 	imp_file.close();
 }
 
 void request_save_data()
 {
-	cout << "Ingrese el nombre/s del alumno: ";
-	getline(cin, students[contador].name);
-	cout << "Ingrese el/los apellido/s del alumno: ";
-	getline(cin, students[contador].lastname);
-	cout << "Ingrese la edad del alumno: ";
-	cin >> students[contador].years;
-	cin.ignore();
-	cout << "Ingrese el numero de DNI del alumno: ";
-	cin >> students[contador].dni;
-	cin.ignore();
-
-	ofstream oup_file;
-	oup_file.open("AyEDI.txt", ios::out | ios::app);
-	if(oup_file.is_open())
+	if(contador<50)
 	{
-		oup_file << students[contador].name << endl;
-		oup_file << students[contador].lastname << endl;
-		oup_file << students[contador].years << endl;
-		oup_file << students[contador].dni << endl;
-		oup_file << students[contador].qualification << endl;
+		cout << "Ingrese el nombre/s del alumno: ";
+	    getline(cin, students[contador].name);
+	    cout << "Ingrese el/los apellido/s del alumno: ";
+	    getline(cin, students[contador].lastname);
+	    cout << "Ingrese la edad del alumno: ";
+	    cin >> students[contador].years;
+	    cin.ignore();
+	    cout << "Ingrese el numero de DNI del alumno: ";
+	    cin >> students[contador].dni;
+	    cin.ignore();
+
+	    ofstream oup_file;
+	    oup_file.open("AyEDI.txt", ios::out | ios::app);
+	    if(oup_file.is_open())
+	    {
+		    oup_file << students[contador].name << endl;
+		    oup_file << students[contador].lastname << endl;
+		    oup_file << students[contador].years << endl;
+		    oup_file << students[contador].dni << endl;
+		    oup_file << students[contador].qualification << endl;
+	    }
+
+	    oup_file.close();
+	    contador++;
 	}
-	oup_file.close();
-	contador++;
 }
 
 void delate_student()
@@ -135,13 +142,16 @@ void delate_student()
 	cin >> selec_student;
 	cin.ignore();
 
-	for(int i = contador-1; selec_student<=i; i--)
+	for(int i = selec_student; i<contador; i++)
 	{
-		students[i-1].name = students[i].name;
-		students[i-1].lastname = students[i].lastname;
-		students[i-1].years = students[i].years;
-		students[i-1].dni = students[i].dni;
-		students[i-1].qualification = students[i].qualification;
+		if((i+1)<=contador)
+		{
+			students[i].name = students[i+1].name;
+		    students[i].lastname = students[i+1].lastname;
+		    students[i].years = students[i+1].years;
+		    students[i].dni = students[i+1].dni;
+		    students[i].qualification = students[i+1].qualification;
+		}
 	}
 
 	--contador;
@@ -196,25 +206,33 @@ void see_students()
 
 void search_q()
 {
-	for(int i=0; i<contador; i++)
+	qualif_f = 0;
+	qualif_f_f = 0;
+
+	if(contador != 0)
 	{
-		if(qualif < students[i].qualification)
+		for(int i=0; i<contador; i++)
 		{
-			qualif = students[i].qualification;
+			if(qualif < students[i].qualification)
+			{
+				qualif = students[i].qualification;
 
-			num_student = i;
-		}
+			    num_student = i;
+		    }
 
-		qualif_f += students[i].qualification;
+		    qualif_f += students[i].qualification;
+	    }
+
+	    qualif_f_f = qualif_f / contador;
+
+	    cout << "La califiacion mas alta es: " << students[num_student].qualification << endl;
+	    cout << "Nombre de alumno: " << students[num_student].name << " " << students[num_student].lastname << endl;
+	    cout << "Edad: " << students[num_student].years << endl;
+	    cout << "NDI: " << students[num_student].dni << endl;
+	    cout << endl;
+	    cout << "el promedio de calificaciones es: " << qualif_f_f << endl;
+	    cout << endl;
+
+	    see_students();
 	}
-
-	cout << "La califiacion mas alta es: " << students[num_student].qualification << endl;
-	cout << "Nombre de alumno: " << students[num_student].name << " " << students[num_student].lastname << endl;
-	cout << "Edad: " << students[num_student].years << endl;
-	cout << "NDI: " << students[num_student].dni << endl;
-	cout << endl;
-	cout << "el promedio de calificaciones es: " << qualif_f << endl;
-	cout << endl;
-
-	see_students();
 }
